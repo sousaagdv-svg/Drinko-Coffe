@@ -17,7 +17,7 @@ export const imageConfig: ImageConfig = {
   coldBrew: '',
   caramelMacchiato: '',
   mochaBelga: '',
-  'mocha-gelado': '/src/assets/images/mocha-gelado.png',
+  'mocha-gelado': '/mocha-gelado.png',
 };
 
 export interface HeroCarouselDrink {

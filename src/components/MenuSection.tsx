@@ -19,7 +19,7 @@ const GalleryItem: React.FC<{
   onAddToCart: (product: Product) => void;
 }> = ({ product, index, activeId, onActive, onAddToCart }) => {
   const isActive = activeId === product.id;
-  const imageUrl = product.imageKey ? ((imageConfig as any)[product.imageKey] || `/src/assets/images/${product.imageKey}.png` || `/src/assets/images/${product.imageKey}.jpg` || '/hero-coffee.png') : '/hero-coffee.png';
+  const imageUrl = product.imageKey ? ((imageConfig as any)[product.imageKey] || `/${product.imageKey}.png` || `/${product.imageKey}.jpg` || '/hero-coffee.png') : '/hero-coffee.png';
 
   return (
     <motion.div
@@ -190,7 +190,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({
         >
           {galleryProducts.map((product) => {
             const isActive = activeId === product.id;
-            const imageUrl = product.imageKey ? ((imageConfig as any)[product.imageKey] || `/src/assets/images/${product.imageKey}.png` || `/src/assets/images/${product.imageKey}.jpg` || '/hero-coffee.png') : '/hero-coffee.png';
+            const imageUrl = product.imageKey ? ((imageConfig as any)[product.imageKey] || `/${product.imageKey}.png` || `/${product.imageKey}.jpg` || '/hero-coffee.png') : '/hero-coffee.png';
 
             return (
               <motion.div
