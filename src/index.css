@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --color-drinko-dark: #271811;
+  --color-drinko-caramel: #a56a44;
+  --color-drinko-caramel-hover: #8f5936;
+  --color-drinko-sand: #d5c4a1;
+  --color-drinko-stone: #baa68c;
+  --color-drinko-card-bg: #f7f3ed;
+  --color-drinko-card-border: #e9e2d6;
+  --color-drinko-pink: #f7b7b6;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #faf8f5;
+  color: #271811;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.font-script {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
