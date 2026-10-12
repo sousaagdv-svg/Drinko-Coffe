@@ -52,7 +52,7 @@ export const CraftSection: React.FC = () => {
           </div>
           <div className="lg:col-span-7 grid grid-cols-2 gap-3 lg:gap-6 h-[68vh] sm:h-[82vh] w-full">
             <div className="relative w-full h-full overflow-hidden rounded-2xl">
-              <motion.div style={{ y: col1Y }} className="absolute top-0 left-0 w-full flex flex-col gap-4">
+              <motion.div style={{ y: col1Y }} className="absolute top-0 left-0 w-full flex flex-col gap-4 will-change-transform">
                 {[...COLUMN_1, ...COLUMN_1].map((img, i) => (
                   <div key={`c1-${i}`} className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shadow-2xl">
                     <img src={img.url} alt={img.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
@@ -61,7 +61,7 @@ export const CraftSection: React.FC = () => {
               </motion.div>
             </div>
             <div className="relative w-full h-full overflow-hidden rounded-2xl">
-              <motion.div style={{ y: col2Y }} className="absolute top-0 left-0 w-full flex flex-col gap-4">
+              <motion.div style={{ y: col2Y }} className="absolute top-0 left-0 w-full flex flex-col gap-4 will-change-transform">
                 {[...COLUMN_2, ...COLUMN_2].map((img, i) => (
                   <div key={`c2-${i}`} className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shadow-2xl">
                     <img src={img.url} alt={img.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />

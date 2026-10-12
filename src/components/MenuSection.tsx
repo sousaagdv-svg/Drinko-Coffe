@@ -105,42 +105,111 @@ export const MenuSection: React.FC<MenuSectionProps> = ({
 }) => {
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const touchStartX = React.useRef<number | null>(null);
+  const touchStartY = React.useRef<number | null>(null);
+  const isNavigatingRef = React.useRef(false);
+  const navigationTimeoutRef = React.useRef<number | null>(null);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const galleryProducts = React.useMemo(() => {
     return INITIAL_PRODUCTS.slice(0, 8);
   }, []);
 
-  // Detector de card centralizado no scroll mobile
-  const handleScroll = () => {
-    if (window.innerWidth >= 1024 || !scrollContainerRef.current) return;
-    
+  const scrollToIndex = (index: number) => {
+    if (!scrollContainerRef.current || isNavigatingRef.current) return;
     const container = scrollContainerRef.current;
     const cards = container.querySelectorAll('.mobile-card');
-    let closestCardId: string | null = null;
-    let minDistance = Infinity;
+    const maxIndex = cards.length - 1;
+    const targetIndex = Math.max(0, Math.min(index, maxIndex));
+    
+    if (targetIndex === currentIndex && cards.length > 0) {
+      // Still update active id
+      setActiveId(galleryProducts[targetIndex]?.id || null);
+    }
+    
+    const targetCard = cards[targetIndex] as HTMLElement;
+    if (!targetCard) return;
 
-    cards.forEach((card) => {
-      const rect = card.getBoundingClientRect();
-      const cardCenter = rect.left + rect.width / 2;
-      const viewportCenter = window.innerWidth / 2;
-      const distance = Math.abs(cardCenter - viewportCenter);
+    isNavigatingRef.current = true;
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = targetCard.getBoundingClientRect();
+    const scrollLeft = targetRect.left - containerRect.left + container.scrollLeft;
 
-      if (distance < minDistance && distance < rect.width * 0.75) {
-        minDistance = distance;
-        closestCardId = card.getAttribute('data-id');
-      }
+    container.scrollTo({
+      left: scrollLeft,
+      behavior: 'smooth',
     });
 
-    if (closestCardId !== activeId) {
-      setActiveId(closestCardId);
+    setCurrentIndex(targetIndex);
+    setActiveId(galleryProducts[targetIndex]?.id || null);
+
+    if (navigationTimeoutRef.current) {
+      clearTimeout(navigationTimeoutRef.current);
     }
+    navigationTimeoutRef.current = window.setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 400);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    touchStartX.current = touch.clientX;
+    touchStartY.current = touch.clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const touch = e.touches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartX.current);
+    const deltaY = Math.abs(touch.clientY - touchStartY.current);
+
+    // If vertical movement is greater than horizontal, allow vertical scroll
+    if (deltaY > deltaX && deltaY > 10) {
+      touchStartX.current = null;
+      touchStartY.current = null;
+    }
+    // Don't prevent default - let browser handle naturally
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current === null || touchStartY.current === null) {
+      touchStartX.current = null;
+      touchStartY.current = null;
+      return;
+    }
+
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - touchStartX.current;
+    const deltaY = touch.clientY - touchStartY.current;
+    const SWIPE_THRESHOLD = 40;
+
+    // Only handle if horizontal swipe is dominant and exceeds threshold
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
+      if (deltaX < 0) {
+        // Swipe left - advance to next card
+        scrollToIndex(currentIndex + 1);
+      } else {
+        // Swipe right - go to previous card
+        scrollToIndex(currentIndex - 1);
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
+  const handleTouchCancel = () => {
+    touchStartX.current = null;
+    touchStartY.current = null;
   };
 
   React.useEffect(() => {
-    const container = scrollContainerRef.current;
-    container?.addEventListener('scroll', handleScroll);
-    return () => container?.removeEventListener('scroll', handleScroll);
-  }, [activeId]);
+    return () => {
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <section id="cardapio" className="w-full bg-[#FAF8F5] py-20 sm:py-32 px-4 sm:px-12 overflow-hidden">
@@ -189,6 +258,15 @@ export const MenuSection: React.FC<MenuSectionProps> = ({
         <div 
           ref={scrollContainerRef}
           className="lg:hidden flex flex-row gap-4 w-full overflow-x-auto snap-x snap-mandatory pb-6 px-2 scrollbar-hide"
+          style={{ 
+            scrollSnapType: 'x mandatory', 
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain'
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchCancel}
         >
           {galleryProducts.map((product) => {
             const isActive = activeId === product.id;
@@ -198,8 +276,15 @@ export const MenuSection: React.FC<MenuSectionProps> = ({
               <motion.div
                 key={product.id}
                 data-id={product.id}
-                className="mobile-card snap-center shrink-0 w-[85vw] sm:w-[60vw] relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-lg border border-[#EBE3DC] transition-all duration-300"
-                onClick={() => setActiveId(isActive ? null : product.id)}
+                className="mobile-card snap-start shrink-0 w-[85vw] sm:w-[60vw] relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-lg border border-[#EBE3DC] transition-all duration-300"
+                onClick={() => {
+                  const idx = galleryProducts.findIndex(p => p.id === product.id);
+                  if (idx >= 0) {
+                    setCurrentIndex(idx);
+                    scrollToIndex(idx);
+                  }
+                  setActiveId(isActive ? null : product.id);
+                }}
               >
                 <div className="p-4 flex flex-col gap-3">
                   <div className={`w-full ${isActive ? 'h-52' : 'h-40'} rounded-xl overflow-hidden relative shadow-md transition-all duration-500`}>
