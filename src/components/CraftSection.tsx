@@ -55,7 +55,7 @@ export const CraftSection: React.FC = () => {
               <motion.div style={{ y: col1Y }} className="absolute top-0 left-0 w-full flex flex-col gap-4">
                 {[...COLUMN_1, ...COLUMN_1].map((img, i) => (
                   <div key={`c1-${i}`} className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shadow-2xl">
-                    <img src={img.url} alt={img.title} className="w-full h-full object-cover" />
+                    <img src={img.url} alt={img.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   </div>
                 ))}
               </motion.div>
@@ -64,7 +64,7 @@ export const CraftSection: React.FC = () => {
               <motion.div style={{ y: col2Y }} className="absolute top-0 left-0 w-full flex flex-col gap-4">
                 {[...COLUMN_2, ...COLUMN_2].map((img, i) => (
                   <div key={`c2-${i}`} className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shadow-2xl">
-                    <img src={img.url} alt={img.title} className="w-full h-full object-cover" />
+                    <img src={img.url} alt={img.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   </div>
                 ))}
               </motion.div>

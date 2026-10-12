@@ -13,8 +13,9 @@ export const MomentSection: React.FC = () => {
           <img
             src="/editorial-moment.jpg"
             alt="Ambiente amplo e iluminado de cafeteria moderna com mesas de madeira e plantas"
-            className="w-full h-full object-cover object-[75%_35%] sm:object-center filter brightness-[0.82] transition-transform duration-1000 hover:scale-105"
             loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover object-[75%_35%] sm:object-center filter brightness-[0.82] transition-transform duration-1000 hover:scale-105"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=1600&q=80';

@@ -35,6 +35,8 @@ const GalleryItem: React.FC<{
         <img
           src={imageUrl}
           alt={product.name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity duration-500 ${
@@ -201,7 +203,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({
               >
                 <div className="p-4 flex flex-col gap-3">
                   <div className={`w-full ${isActive ? 'h-52' : 'h-40'} rounded-xl overflow-hidden relative shadow-md transition-all duration-500`}>
-                    <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                    <img src={imageUrl} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                     <span className="absolute bottom-3 left-3 text-white font-black text-base uppercase drop-shadow-sm">
                       {product.name}

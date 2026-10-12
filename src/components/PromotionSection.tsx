@@ -135,6 +135,8 @@ export const PromotionSection: React.FC<PromotionSectionProps> = ({
               <img
                 src={promoImage}
                 alt={PROMOTIONAL_PRODUCT.name}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-contain filter drop-shadow-2xl"
               />
             </div>
